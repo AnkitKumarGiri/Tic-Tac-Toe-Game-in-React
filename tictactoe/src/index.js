@@ -101,13 +101,14 @@ function Square(props){
 
       const moves = history.map((step, move) => {
         const lastmove = step.lastmove;
-        console.log(lastmove);
+        // console.log(lastmove);
         const desc = move ? 
-          `Go to move # ${move} on col: ${lastmove[1]} row: ${lastmove[0]}` :
+          `Go to move col: ${lastmove[1]} row: ${lastmove[0]}` :
           'Go to game start';
+        const bold = (move === this.state.stepNumber)? 'bold' :'';
         return (
           <li key={move}>
-            <button onClick = {
+            <button className={bold} onClick = {
               () => this.jumpTo(move)}
             >{desc}</button>
           </li>
