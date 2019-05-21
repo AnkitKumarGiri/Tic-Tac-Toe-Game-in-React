@@ -4,7 +4,7 @@ import './index.css';
 
 function Square(props){
     return (
-        <button className="square" onClick={props.onClick}>
+        <button className={props.className} onClick={props.onClick}>
             {props.value}
         </button>
     )
@@ -12,11 +12,12 @@ function Square(props){
   
   class Board extends React.Component {
   
-    renderSquare(i) {
+    renderSquare(i,isWin) {
       return (
         <Square
             value ={this.props.squares[i]}
-            onClick = {()=> this.props.onClick(i)}    
+            onClick = {()=> this.props.onClick(i)}
+            className = {isWin}    
         />
       );
     }
@@ -24,12 +25,18 @@ function Square(props){
     render() {
         let squares= [];
         for (let i =0; i < 3; i++){
-            let row = []
+            let row = [];
+            
             for(let j=0; j < 3; j++){
-                row.push(this.renderSquare(i*3 + j));
+              let isWin = "square";
+              
+              if( this.props.winner && this.props.winner.indexOf(i*3 + j) !== -1 ){ // this square is part of the winning triplet of squares
+                  isWin = isWin + " win";
+              }
+              row.push(<span key={i*3 + j}>{this.renderSquare(i*3 + j, isWin)}</span>);
             }
             squares.push(
-                <div className="board-row">
+                <div className="board-row" key={i}>
                 {row}</div>);
         }      
         
@@ -49,6 +56,7 @@ function Square(props){
         history:[{
           squares: Array(9).fill(null),
           lastmove: Array(2).fill(null),
+          winner: Array(3).fill(null),
         }],
         stepNumber: 0,
         xIsNext: true,
@@ -69,11 +77,13 @@ function Square(props){
       squares[i] = this.state.xIsNext ? 'X' : 'O';
       lastmove[0] = Math.floor(i/3); 
       lastmove[1] = i%3;
+      const winner = calculateWinner(squares);
 
       this.setState({
         history: history.concat([{
           squares: squares,  
-          lastmove: lastmove,        
+          lastmove: lastmove,
+          winner: winner,        
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext,
@@ -114,7 +124,7 @@ function Square(props){
       let status;
 
       if(winner){
-        status = `Winner ${winner}`;
+        status = `Winner ${current.squares[winner[0]]}`;
       } else {
         status = `Next player: ${(this.state.xIsNext ? 'X' : 'O')}`;
       }
@@ -125,6 +135,7 @@ function Square(props){
             <Board
               squares = {current.squares}
               onClick= { (i) => this.handleClick(i)}
+              winner = {current.winner}
             />
           </div>
           <div className="game-info">
@@ -157,8 +168,8 @@ function Square(props){
     ];
     for (let i = 0; i < lines.length ; i++) {
       const [a, b, c] = lines[i];
-      if(squares[a] === squares[b] && squares[a] === squares[c] ){
-        return squares[a];
+      if(squares[a] === squares[b] && squares[a] === squares[c] && squares[a]!=null ){
+        return [a ,b ,c];
       }
     }
     return null;
