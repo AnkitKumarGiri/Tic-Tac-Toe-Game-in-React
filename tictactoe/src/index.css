@@ -59,4 +59,7 @@ body {
  .list-item{
      margin: 0 0 5px 0;
  }
- 
+
+ .togglebutton{
+     margin: 10px;
+ }
