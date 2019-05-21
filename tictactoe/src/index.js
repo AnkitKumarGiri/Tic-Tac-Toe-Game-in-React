@@ -9,7 +9,14 @@ function Square(props){
         </button>
     )
 }
-  
+
+function Toggle(props){
+  return (
+    <button className= "togglebutton" onClick = {props.onClick}>
+      {props.value}
+    </button>
+  )
+}
   class Board extends React.Component {
   
     renderSquare(i,isWin) {
@@ -18,6 +25,15 @@ function Square(props){
             value ={this.props.squares[i]}
             onClick = {()=> this.props.onClick(i)}
             className = {isWin}    
+        />
+      );
+    }
+
+    renderToggle(){
+      return (
+        <Toggle 
+          value = {"ToggleView"}
+          onClick = { () => this.props.onToggle()}
         />
       );
     }
@@ -43,6 +59,7 @@ function Square(props){
         return (
             <div>
             {squares}
+            {this.renderToggle()}
             </div>
       );
     }
@@ -60,6 +77,7 @@ function Square(props){
         }],
         stepNumber: 0,
         xIsNext: true,
+        toggle: false,
       }
     }
 
@@ -87,6 +105,12 @@ function Square(props){
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext,
+      });
+    }
+
+    toggleView(){
+      this.setState({
+        toggle: !this.state.toggle,
       });
     }
 
@@ -121,6 +145,9 @@ function Square(props){
         );
       });
 
+      if(this.state.toggle)
+        moves.reverse();
+
       let status;
 
       if(winner){
@@ -138,6 +165,7 @@ function Square(props){
             <Board
               squares = {current.squares}
               onClick= { (i) => this.handleClick(i)}
+              onToggle= { () => this.toggleView() }
               winner = {current.winner}
             />
           </div>
