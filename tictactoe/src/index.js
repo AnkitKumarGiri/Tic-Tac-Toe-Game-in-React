@@ -125,7 +125,10 @@ function Square(props){
 
       if(winner){
         status = `Winner ${current.squares[winner[0]]}`;
-      } else {
+      } else if( this.state.stepNumber === 9){
+        status = 'Match Drawn';
+      }
+       else {
         status = `Next player: ${(this.state.xIsNext ? 'X' : 'O')}`;
       }
 
